@@ -1,0 +1,134 @@
+# Multi-Agent Financial Analysis System - Git Ignore File
+
+# Environment Variables (NEVER commit these!)
+.env
+.env.local
+.env.*.local
+
+# Note: .env.example should be committed (it's a template)
+# !.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Jupyter Notebook outputs (optional - uncomment if you want to ignore outputs)
+# *.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+*.cover
+*.log
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Project specific
+*.log
+*.sqlite
+*.db
+
+# API Keys and Secrets (extra safety)
+*_key.txt
+*_secret.txt
+secrets/
+credentials/
+
+# OS
+Thumbs.db
+.DS_Store
+*.bak
+*.tmp
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Documentation builds
+docs/_build/
+site/
+
+# LangGraph checkpoints (if stored locally)
+.checkpoints/
+checkpoints/
+
+# Model files (if any)
+*.pkl
+*.h5
+*.model
+models/
+
+# Data files (optional - uncomment if you don't want to track data)
+# data/
+# *.csv
+# *.json
+# *.xlsx
+
+# Output files
+outputs/
+results/
+

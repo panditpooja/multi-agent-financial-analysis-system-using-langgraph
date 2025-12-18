@@ -1,0 +1,42 @@
+# Multi-Agent Financial Analysis System - Main Dependencies
+
+# Core LangChain and LangGraph
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-community>=0.0.20
+langchain-experimental>=0.0.50
+langchain-tavily>=0.0.1
+langgraph>=0.0.20
+
+# OpenAI/LLM Support (via OpenRouter)
+openai>=1.0.0
+
+# Web Search
+tavily-python>=0.3.0
+
+# Financial Data
+# Note: Alpha Vantage is included in langchain-community
+# If you need direct access, install: alpha-vantage>=2.3.1
+
+# Environment Variables
+python-dotenv>=1.0.0
+
+# Type Hints
+typing-extensions>=4.8.0
+
+# Data Validation
+pydantic>=2.0.0
+
+# Jupyter Notebook Support
+jupyter>=1.0.0
+ipykernel>=6.25.0
+notebook>=6.5.0
+
+# Optional: For better visualization in notebooks
+ipython>=8.0.0
+matplotlib>=3.7.0  # For plotting
+pandas>=2.0.0      # For data manipulation
+
+# Optional: For graph visualization
+# graphviz>=0.20.0  # Uncomment if you want to visualize the graph
+
