@@ -5,14 +5,19 @@ A sophisticated multi-agent financial analysis system built with LangGraph that 
 ## 🎯 Features
 
 - **Multi-Agent Architecture**: Supervisor pattern with specialized agents
+- **Django Web Interface**: Modern, responsive chat interface for easy interaction
 - **Financial Data**: Real-time stock market data via Alpha Vantage API
-- **Web Search**: Financial news and information via Tavily search
-- **Data Visualization**: Python REPL for generating charts and plots
+- **Web Search**: Financial news and information via Tavily search (max 2 results per query)
+- **Data Visualization**: Python REPL for generating charts and plots (saved to `static/plots/plot.png`)
 - **Intelligent Routing**: Supervisor agent intelligently routes tasks to appropriate agents
-- **Loop Detection**: Built-in infinite loop prevention
+- **Loop Detection**: Built-in infinite loop prevention with MAX_ITERATIONS=40
+- **Message Truncation**: Automatically keeps only last 5 message pairs (10 messages) to prevent token limit errors
 - **Date Formatting**: Automatic human-readable date conversion
 - **Unicode Cleaning**: Automatic cleaning of problematic Unicode characters
 - **Event Processing**: Proper handling of LangGraph event structure for displaying agent outputs
+- **Metrics Dashboard**: Prometheus metrics integration for monitoring system performance
+- **Response Length Control**: Agents are prompted to keep responses concise (1-2 paragraphs, max 1000 words)
+- **Cache-Busting**: Automatic cache-busting for plot images to ensure fresh visualizations
 
 ## 🏗️ Architecture
 
@@ -27,11 +32,13 @@ The system consists of:
 
 - Python 3.8 or higher
 - API Keys:
-  - OpenRouter API key (for LLM access)
+  - Groq API key (for LLM access via `openai/gpt-oss-120b`) OR OpenRouter API key (alternative)
   - Alpha Vantage API key (for stock data)
   - Tavily API key (optional, for web search)
 
 ## 🚀 Quick Start
+
+### Option 1: Django Web Interface (Recommended)
 
 1. **Clone or download the repository**
 
@@ -50,12 +57,34 @@ The system consists of:
    ```
    Then edit `.env` and add your API keys (see [Configuration](#-configuration) section below).
 
-4. **Start Jupyter Notebook**:
+4. **Run database migrations**:
+   ```bash
+   python manage.py migrate
+   ```
+
+5. **Start the Django server**:
+   ```bash
+   python manage.py runserver
+   ```
+   Or use the helper script:
+   ```bash
+   python run_django_server.py
+   ```
+
+6. **Open in browser**: Navigate to `http://127.0.0.1:8000/`
+
+7. **Access metrics dashboard**: Navigate to `http://127.0.0.1:8000/metrics/`
+
+### Option 2: Jupyter Notebook
+
+1. **Follow steps 1-3 from Option 1**
+
+2. **Start Jupyter Notebook**:
    ```bash
    jupyter notebook
    ```
 
-5. **Open and run** `multi_agent_system_financial_analysis.ipynb`
+3. **Open and run** `research/multi_agent_system_financial_analysis.ipynb`
 
 ## 📦 Installation
 
@@ -94,18 +123,38 @@ The system consists of:
 2. **Edit `.env` file** and add your actual API keys:
 
 ```env
-OPENROUTER_API_KEY=your_openrouter_api_key_here
+# For Groq (currently used):
+GROQ_API_KEY=your_groq_api_key_here
+
+# OR for OpenRouter (alternative):
+# OPENROUTER_API_KEY=your_openrouter_api_key_here
+
 ALPHAVANTAGE_API_KEY=your_alpha_vantage_api_key_here
 TAVILY_API_KEY=your_tavily_api_key_here  # Optional
 ```
 
 ### Getting API Keys
 
-- **OpenRouter**: Sign up at [OpenRouter.ai](https://openrouter.ai/) and get your API key
+- **Groq**: Sign up at [Groq.com](https://console.groq.com/) and get your API key (currently using `openai/gpt-oss-120b` model)
+- **OpenRouter**: Sign up at [OpenRouter.ai](https://openrouter.ai/) and get your API key (alternative LLM provider)
 - **Alpha Vantage**: Get a free API key at [Alpha Vantage](https://www.alphavantage.co/support/#api-key)
 - **Tavily**: Sign up at [Tavily](https://tavily.com/) for web search API (optional)
 
 ## 📖 Usage
+
+### Using the Django Web Interface
+
+1. **Start the server** (see [Quick Start](#-quick-start))
+
+2. **Open** `http://127.0.0.1:8000/` in your browser
+
+3. **Ask questions** in the chat interface, for example:
+   - "What was the last closing stock price of AAPL?"
+   - "Summarize the latest news about Tesla's stock performance."
+   - "Draw a plot of the closing stock prices of WMT over the last week."
+   - "Get me the stock information for NVDA"
+
+4. **View metrics**: Navigate to `http://127.0.0.1:8000/metrics/` to see system performance metrics
 
 ### Running the Notebook
 
@@ -114,7 +163,7 @@ TAVILY_API_KEY=your_tavily_api_key_here  # Optional
    jupyter notebook
    ```
 
-2. **Open** `multi_agent_system_financial_analysis.ipynb`
+2. **Open** `research/multi_agent_system_financial_analysis.ipynb`
 
 3. **Run all cells** to initialize the system
 
@@ -185,9 +234,26 @@ See [tests/README.md](tests/README.md) for more testing information.
 
 ```
 .
-├── multi_agent_system_financial_analysis.ipynb  # Main notebook
+├── agentic_ai_multi_gent_financial_analysis.py   # Main Python file (used by Django)
+├── financial_ai/                                  # Django app
+│   ├── views.py                                   # Django views (chat interface, metrics)
+│   ├── urls.py                                    # URL routing
+│   ├── settings.py                                # Django settings
+│   └── ...
+├── templates/financial_ai/                        # Django templates
+│   ├── index.html                                 # Main chat interface
+│   ├── metrics.html                               # Metrics dashboard
+│   └── history.html                              # Query history (placeholder)
+├── static/plots/                                  # Generated plot images
+│   └── plot.png                                   # Latest generated plot
+├── research/
+│   └── multi_agent_system_financial_analysis.ipynb # Jupyter notebook
+├── metrics_collector.py                           # Metrics collection module
+├── metrics_integration.py                         # Metrics integration helpers
 ├── requirements.txt                               # Main dependencies
-├── requirements-test.txt                         # Test dependencies
+├── requirements-test.txt                          # Test dependencies
+├── manage.py                                      # Django management script
+├── run_django_server.py                           # Django server helper
 ├── .env.example                                   # Environment variables template
 ├── .gitignore                                     # Git ignore file
 ├── pytest.ini                                     # Pytest configuration
@@ -209,48 +275,76 @@ See [tests/README.md](tests/README.md) for more testing information.
 ### Agents
 
 - **Financial Agent**: Uses Alpha Vantage API to fetch stock market data
+  - Automatically extracts ticker symbols from company names (e.g., "Microsoft" → "MSFT")
+  - Never asks for clarification - always uses the tool
   - Automatically formats dates to human-readable format
   - Handles errors gracefully with informative messages
+  - Provides data in structured format for visualization requests
 
 - **Web Search Agent**: Uses Tavily to search for financial information
-  - Returns comprehensive search results
+  - Returns comprehensive search results (max 2 results per query)
+  - Synthesizes information from multiple sources
+  - Keeps responses concise (1-2 paragraphs)
 
 - **Code Agent**: Uses Python REPL for data visualization
-  - Generates code for plots and charts
+  - Extracts data from conversation history
+  - Generates plots and saves to `static/plots/plot.png`
+  - Uses matplotlib with 'Agg' backend for web compatibility
+  - Keeps responses brief (1-2 sentences)
 
 - **Supervisor Agent**: Routes tasks and manages workflow
-  - Detects task completion
-  - Prevents infinite loops
+  - Detects task completion intelligently
+  - Prevents infinite loops (MAX_ITERATIONS=40)
   - Manages agent transitions
+  - Special handling for visualization requests (FinancialAgent → CodeAgent → FINISH)
 
 ### Features
 
-- **Loop Detection**: Automatically detects and prevents infinite loops
+- **Message Truncation**: Automatically keeps only last 5 message pairs (10 messages) to prevent token limit errors
+- **Loop Detection**: Automatically detects and prevents infinite loops with multiple detection strategies
 - **Date Formatting**: Converts dates from various formats to human-readable format
 - **Unicode Cleaning**: Removes problematic Unicode characters from responses
 - **Error Handling**: Comprehensive error handling throughout the system
 - **State Management**: Uses LangGraph's checkpointing for state persistence
+- **Plot Generation**: Saves plots to `static/plots/plot.png` with cache-busting timestamps
+- **Metrics Collection**: Prometheus metrics for monitoring latency, reliability, and performance
+- **Response Length Control**: All agents are prompted to keep responses concise
 
 ## 🛠️ Customization
 
 ### Changing the LLM Model
 
-Edit the model in the notebook (around Cell 3):
+Edit the `get_llm()` function in `agentic_ai_multi_gent_financial_analysis.py`:
+
+**For Groq (current)**:
 ```python
-llm = ChatOpenAI(
-    model="nvidia/nemotron-nano-9b-v2:free",  # Change this to your preferred model
-    base_url="https://openrouter.ai/api/v1",
-    api_key=api_key,
-    temperature=0,
-    max_tokens=1000
-)
+def get_llm():
+    api_key = os.getenv("GROQ_API_KEY")
+    return ChatOpenAI(
+        model="openai/gpt-oss-120b",  # Change this to your preferred Groq model
+        base_url="https://api.groq.com/openai/v1",
+        api_key=api_key,
+        temperature=0,
+        max_tokens=2000,
+    )
 ```
 
-**Note**: The current model is `nvidia/nemotron-nano-9b-v2:free`. You can use any model supported by OpenRouter. Popular alternatives include:
-- `openai/gpt-4o-mini`
-- `openai/gpt-3.5-turbo`
-- `anthropic/claude-3-haiku`
-- `google/gemini-pro`
+**For OpenRouter (alternative)**:
+```python
+def get_llm():
+    api_key = os.getenv("OPENROUTER_API_KEY")
+    return ChatOpenAI(
+        model="openai/gpt-4o-mini",  # Change this to your preferred model
+        base_url="https://openrouter.ai/api/v1",
+        api_key=api_key,
+        temperature=0,
+        max_tokens=2000
+    )
+```
+
+**Note**: The current model is `openai/gpt-oss-120b` via Groq. Popular alternatives include:
+- Groq: `llama-3.1-70b-versatile`, `mixtral-8x7b-32768`
+- OpenRouter: `openai/gpt-4o-mini`, `openai/gpt-3.5-turbo`, `anthropic/claude-3-haiku`
 
 ### Adding New Agents
 
@@ -283,10 +377,24 @@ The exact cell numbers may vary, but you can search for "system_prompt" in the n
    - Check Python version (3.8+)
 
 3. **Infinite Loops**
-   - The system has built-in loop detection, but if issues persist:
+   - The system has built-in loop detection (MAX_ITERATIONS=40), but if issues persist:
      - Check the supervisor prompt
-     - Verify MAX_ITERATIONS is set appropriately
+     - Verify MAX_ITERATIONS is set to 40 in `agentic_ai_multi_gent_financial_analysis.py`
      - Review agent responses for identical content
+     - Check logs for loop detection messages
+
+4. **Token Limit Errors (Error code: 413)**
+   - The system automatically truncates messages to last 10 messages (5 pairs)
+   - If you still see token errors:
+     - Verify `truncate_messages` reducer is being used in `AgentState`
+     - Check that conversation history is being properly truncated
+     - Consider reducing MAX_MESSAGES in `truncate_messages` function if needed
+
+5. **Plot Not Displaying**
+   - Check that `static/plots/plot.png` exists and was recently modified
+   - Verify cache-busting timestamp is included in plot URL
+   - Check browser console for image loading errors
+   - Ensure matplotlib backend is set to 'Agg' (non-interactive)
 
 4. **Date Formatting Issues**
    - Dates should automatically format, but if issues occur:
@@ -309,16 +417,28 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 - [Tavily API](https://docs.tavily.com/)
 - [OpenRouter](https://openrouter.ai/)
 
+## 🔮 Recent Improvements
+
+- ✅ **Message Truncation**: Automatic conversation history management (last 10 messages)
+- ✅ **Django Web Interface**: Modern chat interface with real-time responses
+- ✅ **Metrics Dashboard**: Prometheus integration for performance monitoring
+- ✅ **Improved Prompts**: Response length guidelines and better routing instructions
+- ✅ **Plot Generation**: Saves plots to file with cache-busting for web display
+- ✅ **Loop Prevention**: Enhanced supervisor logic with multiple detection strategies
+- ✅ **Error Handling**: Comprehensive error handling and fallback mechanisms
+- ✅ **Performance**: Using `time.perf_counter()` for accurate latency measurements
+
 ## 🔮 Future Enhancements
 
 - [ ] Add more financial data sources (Yahoo Finance, Reuters)
 - [ ] Implement reflection steps for quality improvement
-- [ ] Add support for multiple stock tickers
-- [ ] Enhanced visualization capabilities
-- [ ] Add conversation history management
-- [ ] Implement rate limiting
-- [ ] Add logging system
-- [ ] Support for more LLM providers
+- [ ] Add support for multiple stock tickers in single query
+- [ ] Enhanced visualization capabilities (multiple chart types)
+- [ ] Implement rate limiting per user/IP
+- [ ] Add conversation export functionality
+- [ ] Support for more LLM providers (Anthropic, Google, etc.)
+- [ ] Add authentication and user management
+- [ ] Implement query history persistence in database
 
 ## 📧 Support
 
