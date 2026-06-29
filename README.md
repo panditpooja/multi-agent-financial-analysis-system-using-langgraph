@@ -264,5 +264,9 @@ Provided as-is for educational and research purposes.
 ## Author
 
 **Pooja Diwakar Pandit**  
-M.S. Information Science (Machine Learning), University of Arizona — GPA 4.0 | IEEE First Author  
-[LinkedIn](https://www.linkedin.com/in/pooja-pandit-177978135/) · [Portfolio](https://poojapandit.pythonanywhere.com) · [GitHub](https://github.com/panditpooja)
+M.S. Information Science (Machine Learning) · GPA 4.0 · University of Arizona  
+IEEE First Author · Distinguished Graduate Scholar
+
+[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github)](https://github.com/panditpooja)
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat&logo=linkedin)](https://www.linkedin.com/in/pooja-pandit-177978135/)
+[![Portfolio](https://img.shields.io/badge/-Portfolio-4CAF50?style=flat&logo=firefox)](https://poojapandit.pythonanywhere.com)
